@@ -23,7 +23,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.flywaydb:flyway-mysql'
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.7.6'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -31,7 +30,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
-
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
 	implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
@@ -39,14 +37,15 @@ dependencies {
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
 	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 	implementation group: 'io.springfox', name: 'springfox-bean-validators', version: '3.0.0'
-	implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
-	implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda'
-	testImplementation 'org.mockito:mockito-inline:4.8.0:'
-	testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
+	testImplementation 'org.mockito:mockito-inline:4.10.0'
+	testImplementation 'org.mockito:mockito-junit-jupiter:4.10.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'junit:junit:4.13.2'
-	testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.14.0'
+	testImplementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
+	testImplementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.5' // keep 3.1.5
+
+
 }
 
 configurations {

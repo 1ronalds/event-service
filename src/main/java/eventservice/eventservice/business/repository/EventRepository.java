@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -17,7 +18,7 @@ public interface EventRepository extends JpaRepository<EventEntity, Long> {
 
     List<EventEntity> findAllByCountryAndTypeTypeAndCity(String country, String type, String city);
 
-    List<EventEntity> findAllByCountryAndTypeTypeAndCityAndDateTimeBetween(String country, String type, String city, Date dateFrom, Date dateTo);
+    List<EventEntity> findAllByCountryAndTypeTypeAndCityAndDateTimeBetween(String country, String type, String city, LocalDateTime dateFrom, LocalDateTime dateTo);
 
-    List<EventEntity> findAllByCountryAndTypeTypeAndDateTimeBetween(String country, String type, Date dateFrom, Date dateTo);
+    List<EventEntity> findAllByCountryAndTypeTypeAndDateTimeBetween(String country, String type, LocalDateTime dateFrom, LocalDateTime dateTo);
 }

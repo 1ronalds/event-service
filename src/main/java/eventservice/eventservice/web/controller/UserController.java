@@ -31,6 +31,10 @@ public class UserController {
 
     private final UserService service;
 
+    /**
+     * Finds all details of specific user
+     * @param username
+     */
     @ApiOperation(value = "Finds all details of specific user")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = HTTPResponseMessages.HTTP_200),
@@ -43,6 +47,10 @@ public class UserController {
         return ResponseEntity.ok(service.findUserDetails(username));
     }
 
+    /**
+     * Create new user
+     * @param user
+     */
     @ApiOperation(value = "Create new user")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = HTTPResponseMessages.HTTP_200),
@@ -55,6 +63,11 @@ public class UserController {
         return ResponseEntity.ok(service.saveUser(user));
     }
 
+    /**
+     * Edit user details
+     * @param username
+     * @param user
+     */
     @ApiOperation(value = "Edit user details")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = HTTPResponseMessages.HTTP_200),
@@ -69,6 +82,10 @@ public class UserController {
         return ResponseEntity.ok(service.editUser(user, username));
     }
 
+    /**
+     * Delete user
+     * @param username
+     */
     @ApiOperation(value = "Delete user")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = HTTPResponseMessages.HTTP_200),

@@ -1,5 +1,6 @@
 package eventservice.eventservice.business.repository.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -43,8 +45,9 @@ public class EventEntity {
     @Column(name = "max_attendance")
     private int maxAttendance;
 
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm") //necessary for test to work
     @Column(name = "event_datetime")
-    private Date dateTime;
+    private LocalDateTime dateTime;
 
     @Column(name = "attendee_count")
     private int attendeeCount;

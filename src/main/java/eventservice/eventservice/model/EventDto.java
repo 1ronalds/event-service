@@ -1,16 +1,14 @@
 package eventservice.eventservice.model;
 
-import eventservice.eventservice.business.repository.model.EventTypeEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
-
+import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,7 +25,7 @@ public class EventDto {
 
     @ApiModelProperty(value = "Description of the event")
     @NotNull
-    @Size(min = 50, max = 500)
+    @Size(min = 10, max = 500)
     private String description;
 
     @ApiModelProperty(value = "Country, where the event will take place")
@@ -44,15 +42,16 @@ public class EventDto {
     @NotNull
     private int maxAttendance;
 
-    @ApiModelProperty(value = "Date and time of the event")
+    @ApiModelProperty(value = "Date and time of the event in format d-m-yyyy hh:mm")
     @NotNull
-    private Date dateTime;
+    @JsonFormat(pattern="d-M-yyyy HH:mm")
+    private LocalDateTime dateTime;
 
     @ApiModelProperty(value = "The amount of people who are attending the event")
     private int attendeeCount;
 
     @ApiModelProperty(value = "Organiser of the event")
-    private UserDto organiser;
+    private UserMinimalDto organiser;
 
     @ApiModelProperty(value = "Type of event")
     private EventTypeDto type;
