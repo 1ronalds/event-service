@@ -25,18 +25,22 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -47,32 +51,39 @@ public class EventIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    EventRepository eventRepository;
+    private EventRepository eventRepository;
 
     @MockBean
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @MockBean
-    CountryCityServiceConnection countryCityServiceConnection;
-
+    private CountryCityServiceConnection countryCityServiceConnection;
     EventMinimalDto eventDto1;
     EventMinimalDto eventDto2;
     EventMinimalDto eventDto3;
     EventMinimalDto eventDto4;
     EventMinimalDto eventDto5;
     EventMinimalDto eventDto6;
-    EventEntity eventEntity;
+
     UserEntity userEntity;
+    EventEntity eventEntity;
+    EventEntity eventEntity1;
+    EventEntity eventEntity2;
+    EventEntity eventEntity3;
+    EventEntity eventEntity4;
+    EventEntity eventEntity5;
+    EventEntity eventEntity6;
+
     EventTypeEntity eventTypeEntity;
+    RoleEntity roleEntity;
 
     @BeforeEach
     void init(){
         eventTypeEntity = new EventTypeEntity(1L, "public");
-        RoleEntity roleEntity = new RoleEntity(1L, "admin");
+        roleEntity = new RoleEntity(1L, "admin");
         userEntity = new UserEntity(1L, "AdminUser", "admin@admin.com", "password123", "Adam", "Leo", roleEntity);
         eventEntity = new EventEntity(7L, "Random contest", "No description", "Latvia", "Liepāja", 10,
                 LocalDateTime.of(2023, 1, 1, 12, 00), 0, userEntity, eventTypeEntity);
-
         eventDto1 = new EventMinimalDto(1L, "Bicycling contest");
         eventDto2 = new EventMinimalDto(2L, "Theatre");
         eventDto3 = new EventMinimalDto(3L, "Marathon");
@@ -80,21 +91,53 @@ public class EventIntegrationTest {
         eventDto5 = new EventMinimalDto(5L, "Movie night");
         eventDto6 = new EventMinimalDto(6L, "Kebab eating contest");
 
+        UserEntity fourthUser = new UserEntity(4L, "Damian123", "Damian123@gmail.com", "password", "Damian",
+                "Blaskowicz", new RoleEntity(2L, "user"));
+        UserEntity thirdUser = new UserEntity(3L, "CasualMovieEnjoyer", "thisMyEmail@gmail.com", "h@ck3rM@N", "Movie",
+                "Enjoyer", new RoleEntity(2L, "user"));
+        UserEntity secondUser = new UserEntity(2L, "BestClientEver", "bestClientEver@gmail.com", "h@ck3rM@N", "Mary",
+                "Jackson", new RoleEntity(2L, "user"));
+
+        eventEntity1 = new EventEntity(1L, "Bicycling contest",
+                "A contest of bicycling free to watch and participate", "Latvia",
+                "Riga", 300, LocalDateTime.of(LocalDate.of(2022, 12 ,8),
+                LocalTime.of(12,0)), 2, secondUser, new EventTypeEntity(1L, "public"));
+
+        eventEntity2 = new EventEntity(2L, "Theater", "Everyone will be amazed watching this theatre", "Latvia",
+                "Venstspils", 50, LocalDateTime.of(LocalDate.of(2022, 12 ,4), LocalTime.of(15,30)),
+                3, thirdUser, new EventTypeEntity(2L, "private"));
+
+        eventEntity3 = new EventEntity(3L, "Marathon", "Running is good for your health, so join our 7km marathon", "Lithuania",
+                "Vilnius", 1000, LocalDateTime.of(LocalDate.of(2022, 12 ,1), LocalTime.of(10,30)),
+                2, fourthUser, new EventTypeEntity(2L, "private"));
+
+        eventEntity4 = new EventEntity(4L, "Yoga", "Come, join us in a group yoga session.", "Latvia",
+                "Venstspils", 200, LocalDateTime.of(LocalDate.of(2022, 11 ,1), LocalTime.of(10,30)),
+                20, fourthUser, new EventTypeEntity(1L, "public"));
+
+        eventEntity5 = new EventEntity(5L, "Movie night", "Join us in watching a christmas movie", "Latvia",
+                "Riga", 500, LocalDateTime.of(LocalDate.of(2022, 12 ,1), LocalTime.of(10,30)),
+                0, fourthUser, new EventTypeEntity(1L, "public"));
+
+        eventEntity6 = new EventEntity(6L, "Kebab eating contest", "Prove to everyone once and for all that you are the best kebab eater in Lithuania!", "Lithuania",
+                "Kaunas", 500, LocalDateTime.of(LocalDate.of(2022, 12 ,1), LocalTime.of(10,30)),
+                0, fourthUser, new EventTypeEntity(2L, "private"));
 
     }
 
     @Test
     void findAllPublicEvents_OnlyCountrySpecified_Found() throws Exception {
-
+        Mockito.when(eventRepository.findAllByCountryAndTypeType("Latvia", "public"))
+                .thenReturn(List.of(eventEntity1, eventEntity4, eventEntity5));
         JsonMapper jm = JsonMapper.builder().build();
         String eventJsonExpectedResult = jm.writeValueAsString(List.of(eventDto1, eventDto4, eventDto5));
 
         MvcResult result = mockMvc.perform(get("/v1/events/event")
-                            .param("country", "Latvia")
-                            .contentType(MediaType.APPLICATION_JSON))
-                        .andDo(print())
-                        .andExpect(status().isOk())
-                        .andReturn();
+                        .param("country", "Latvia")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
 
         assertEquals(eventJsonExpectedResult, result.getResponse().getContentAsString());
     }
@@ -105,24 +148,26 @@ public class EventIntegrationTest {
         String eventJsonExpectedResult = jm.writeValueAsString(Collections.emptyList());
 
         MvcResult result = mockMvc.perform(get("/v1/events/event")
-                            .param("country", "Sweden")
-                            .contentType(MediaType.APPLICATION_JSON))
-                        .andDo(print())
-                        .andExpect(status().isOk())
-                        .andReturn();
+                        .param("country", "Sweden")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
 
         assertEquals(eventJsonExpectedResult, result.getResponse().getContentAsString());
     }
 
     @Test
     void findAllPublicEvents_CountryAndCitySpecified_Found() throws Exception {
+        Mockito.when(eventRepository.findAllByCountryAndTypeTypeAndCity("Latvia", "public", "Venstspils"))
+                .thenReturn(List.of(eventEntity4));
         JsonMapper jm = JsonMapper.builder().build();
         String eventJsonExpectedResult = jm.writeValueAsString(List.of(eventDto4));
 
         MvcResult result = mockMvc.perform(get("/v1/events/event")
-                    .param("country", "Latvia")
-                    .param("city", "Venstspils")
-                    .contentType(MediaType.APPLICATION_JSON))
+                        .param("country", "Latvia")
+                        .param("city", "Venstspils")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -148,6 +193,10 @@ public class EventIntegrationTest {
 
     @Test
     void findAllPublicEvents_CountryAndDateFromAndDateToSpecified_Found() throws Exception{
+        Mockito.when(eventRepository.findAllByCountryAndTypeTypeAndDateTimeBetween("Latvia", "public",
+                        LocalDateTime.of(2020, 11, 12, 0, 0),
+                        LocalDateTime.of(2023, 11, 12, 0, 0)))
+                .thenReturn(List.of(eventEntity1, eventEntity4, eventEntity5));
         JsonMapper jm = JsonMapper.builder().build();
         String eventJsonExpectedResult = jm.writeValueAsString(List.of(eventDto1, eventDto4, eventDto5));
 
@@ -182,6 +231,10 @@ public class EventIntegrationTest {
 
     @Test
     void findAllPublicEvents_CountryAndCityAndDateFromAndDateToSpecified_Found() throws Exception{
+        Mockito.when(eventRepository.findAllByCountryAndTypeTypeAndCityAndDateTimeBetween("Latvia", "public", "Venstspils",
+                        LocalDateTime.of(2020, 11, 12, 0, 0),
+                        LocalDateTime.of(2023, 11, 12, 0, 0)))
+                .thenReturn(List.of(eventEntity4));
         JsonMapper jm = JsonMapper.builder().build();
         String eventJsonExpectedResult = jm.writeValueAsString(List.of(eventDto4));
 

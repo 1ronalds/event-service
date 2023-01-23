@@ -1,6 +1,7 @@
 package eventservice.eventservice.business.handlers;
 
 
+import eventservice.eventservice.business.handlers.exceptions.CountryNotFoundException;
 import eventservice.eventservice.business.handlers.exceptions.DateIntervalNotSpecifiedException;
 import eventservice.eventservice.business.handlers.exceptions.EmailExistsException;
 import eventservice.eventservice.business.handlers.exceptions.EventNotFoundException;
@@ -87,6 +88,13 @@ public class ExceptionHandlerMethods {
     protected ResponseEntity<ErrorModel> handleEventNotFound(Exception ex, HttpServletRequest request) {
         ErrorModel errorModel = new ErrorModel(LocalDate.now(), 404,
                 "Not found", "Requested event isn't found", request.getRequestURI());
+        return new ResponseEntity<>(errorModel, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CountryNotFoundException.class)
+    protected ResponseEntity<ErrorModel> handleCountryNotFound(Exception ex, HttpServletRequest request) {
+        ErrorModel errorModel = new ErrorModel(LocalDate.now(), 404,
+                "Not Found", "This country does not exist", request.getRequestURI());
         return new ResponseEntity<>(errorModel, HttpStatus.NOT_FOUND);
     }
 }

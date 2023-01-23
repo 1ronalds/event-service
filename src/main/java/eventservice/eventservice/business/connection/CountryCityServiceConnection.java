@@ -2,13 +2,14 @@ package eventservice.eventservice.business.connection;
 
 import eventservice.eventservice.business.connection.model.CityDto;
 import eventservice.eventservice.business.connection.model.CountryDto;
+import eventservice.eventservice.business.handlers.CustomErrorDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name = "countrycityservice", url = "localhost:8081/api/country-city-service")
+@FeignClient(name = "countrycityservice", url = "localhost:8081/api/country-city-service", configuration = CustomErrorDecoder.class)
 public interface CountryCityServiceConnection {
 
     @GetMapping("/v1/countries")
